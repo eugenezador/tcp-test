@@ -18,7 +18,7 @@ void TcpSocket::doConnect()
     qDebug() << "connecting...";
 
     // this is not blocking call
-    socket->connectToHost("youtube.com", 80);
+    socket->connectToHost("192.168.2.10", 800);
 
     // need to wait...
     if(!socket->waitForConnected(5000))
@@ -31,7 +31,6 @@ void TcpSocket::connected()
 {
     qDebug() << "connected...";
 
-        // Hey server, tell me about you.
     socket->write("HEAD / HTTP/1.0\r\n\r\n\r\n\r\n");
 }
 
