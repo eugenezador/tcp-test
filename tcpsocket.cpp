@@ -2,8 +2,24 @@
 
 TcpSocket::TcpSocket(QObject *parent)
     : QObject{parent}
+    , socket(new QTcpSocket(this))
 {
 
+    connect(socket, &QTcpSocket::connected, this, &TcpSocket::connected);
+    connect(socket, &QTcpSocket::disconnected, this, &TcpSocket::disconnected);
+    connect(socket, &QTcpSocket::bytesWritten, this, &TcpSocket::bytesWritten);
+    connect(socket, &QTcpSocket::readyRead, this, &TcpSocket::readyRead);
+
+    qDebug() << "connecting...";
+
+    // this is not blocking call
+    socket->connectToHost("192.168.2.10", 800);
+
+    // need to wait...
+    if(!socket->waitForConnected(5000))
+    {
+            qDebug() << "Error: " << socket->errorString();
+    }
 }
 
 void TcpSocket::doConnect()
@@ -31,7 +47,7 @@ void TcpSocket::connected()
 {
     qDebug() << "connected...";
 
-    socket->write("HEAD / HTTP/1.0\r\n\r\n\r\n\r\n");
+    socket->write("");
 }
 
 void TcpSocket::disconnected()
@@ -47,9 +63,21 @@ void TcpSocket::bytesWritten(qint64 bytes)
 
 void TcpSocket::readyRead()
 {
-    qDebug() << "reading...";
+    received_data.append(socket->readAll());
 
-        // read the data from the socket
-        qDebug() << socket->readAll();
+
+    qDebug() << "reading: ";
+    // read the data from the socket
+//    qDebug() << socket->readAll();
+
+//    qDebug() << received_data.toUInt();
+
+    for(int i = 0; i < received_data.size(); i++){
+        tcp_data_array.append(received_data[i]);
+//        qDebug() << received_data[i] << " : ";
+    }
+
+    for(int i = 0; i < tcp_data_array.size(); i++)
+    qDebug() << tcp_data_array[i];
 }
 

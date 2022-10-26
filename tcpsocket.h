@@ -25,6 +25,10 @@ public slots:
 private:
     QTcpSocket *socket;
 
+    QByteArray received_data;
+
+    QVector<int16_t> tcp_data_array;
+
 };
 
 #endif // TCPSOCKET_H
